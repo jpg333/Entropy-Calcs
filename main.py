@@ -24,6 +24,6 @@ def entropyCalc(string):
 
 phrase = input("Enter characters for entropy calculation: ")
 
-print("Entropy of '" + phrase + "' is:\n" + str(entropyCalc(phrase)))
+print("Entropy of '" + phrase + "' in bits is:\n" + str(entropyCalc(phrase)))
 
 
