@@ -1,6 +1,7 @@
 # imports
 import math
 
+
 # calculate and return entropy of a string
 def entropyCalc(string):
     # initialize entropy at 0
