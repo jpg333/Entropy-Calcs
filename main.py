@@ -9,7 +9,7 @@ def entropyOfString(string):
 
     # loop through all 256 possible ascii inputs
     for i in range(256):
-        # p = probability = the occurrence count of any given ascii character divided by the total number of
+        # p = probability = the frequency of any given ascii character divided by the total number of
         #   characters in the string
         p = string.count(chr(i)) / len(string)
 
@@ -23,8 +23,10 @@ def entropyOfString(string):
 
 
 def entropyOfProb(prob):
+    #complement = float(1.0 - prob)
     entropy = 0
     entropy += -(prob * math.log2(prob))
+    #entropy += -(complement * math.log2(complement))
     return entropy
 
 
@@ -34,21 +36,83 @@ def strToFloat(string):
     return flt
 
 
+def probCalc():
+    itemList = []
+    itemCount = int(input("Enter the number of unique items in your set: "))
+    totalEntropy = 0
+
+    print("Does every unique element have the same frequency?")
+
+    # try-except to ensure valid input
+    while True:
+        try:
+            sameOp = input("Enter 'y' or 'n': ")
+            if sameOp not in ("y", "Y", "n", "N"):
+                raise ValueError
+        except ValueError:
+            print("Error: choice must be 'y' or 'n'")
+        else:
+            break
+
+    if sameOp in ("y", "Y"):
+        while True:
+            try:
+                freq = int(input("Enter the frequency of each unique item: "))
+            except ValueError:
+                print("Error: Item frequency must be an integer")
+            else:
+                break
+        setSize = freq * itemCount
+
+        for i in range(itemCount):
+            totalEntropy += entropyOfProb(freq / setSize)
+
+        print("Set:\n"
+              "Number of unique items:          " + str(itemCount) + "\n"
+              "Frequency of each item:          " + str(freq) + "\n"
+              "Total number of items in set:    " + str(setSize) + "\n"
+              "Entropy of set:                  " + str(totalEntropy))
+
+    else:
+        for i in range(itemCount):
+            while True:
+                try:
+                    itemList.append(
+                        int(input("Enter the number frequency of item " + str(i + 1) + " in your set: ")))
+                except ValueError:
+                    print("Error: Item frequency must be an integer")
+                else:
+                    break
+
+        setSize = sum(itemList)
+
+        for i in range(len(itemList)):
+            totalEntropy += entropyOfProb(itemList[i] / setSize)
+
+        print("Set:")
+        for i in range(len(itemList)):
+            print("Item " + str(i+1) + ": " + str(itemList[i]))
+
+        print("Entropy of set: " + str(totalEntropy))
+    return
+
+
 # driving method from which other functions are chained
 def start():
     # initial selection
     print("Select an Entropy Calculator Type:\n"
           "1. Entropy based on probabilities\n"
-          "2. Entropy based on symbol frequencies in a phrase\n")
+          "2. Entropy based on item frequencies in a set\n"
+          "3. Entropy based on symbol frequencies in a phrase\n")
 
     # try-except to ensure valid input
     while True:
         try:
-            answer = input("Enter '1' or '2': ")
-            if answer not in ("1", "2"):
+            answer = input("Enter '1', '2', or '3': ")
+            if answer not in ("1", "2", "3"):
                 raise ValueError
         except ValueError:
-            print("Error: please enter '1' or '2'")
+            print("Error: choice must be '1', '2', or '3'")
         else:
             break
 
@@ -69,11 +133,12 @@ def start():
         print("Entropy of " + str(inp) + " in bits is:\n" + str(entropyOfProb(float(odds))))
 
     elif answer == '2':
+        probCalc()
+
+    else:
         # symbol frequency entropy
         phrase = input("Enter characters for entropy calculation: ")
-        print("Entropy of '" + phrase + "' in bits is:\n" + str(entropyOfString(phrase)))
-    else:
-        return 0
+        print("Entropy of\n'" + phrase + "'\nin bits is: " + str(entropyOfString(phrase)))
 
 
 start()
